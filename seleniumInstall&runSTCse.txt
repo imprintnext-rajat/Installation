@@ -1,0 +1,77 @@
+sudo apt update 
+sudo apt install -y unzip xvfb libxi6 libgconf-2-4 
+
+sudo apt install default-jdk 
+
+# lastest version of google chrome(112)--
+sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add 
+sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list" 
+sudo apt -y update 
+sudo apt -y install google-chrome-stable 
+
+google-chrome --version 
+
+# install chrome drive--
+wget https://chromedriver.storage.googleapis.com/112.0.5615.28/chromedriver_linux64.zip
+unzip chromedriver_linux64.zip 
+
+sudo mv chromedriver /usr/bin/chromedriver 
+sudo chown root:root /usr/bin/chromedriver 
+sudo chmod +x /usr/bin/chromedriver
+
+#Download Required Jar Files ---
+##{The Selenium Server is required to run Remote Selenium WebDrivers. You need to download the Selenium standalone server jar file using ##the below commands or visit here to find the latest version of Jar file.}##
+
+wget https://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar 
+mv selenium-server-standalone-3.141.59.jar selenium-server-standalone.jar
+
+wget http://www.java2s.com/Code/JarDownload/testng/testng-6.8.7.jar.zip 
+unzip testng-6.8.7.jar.zip 
+
+#Start Chrome via Selenium Server----(optional)
+xvfb-run java -Dwebdriver.chrome.driver=/usr/bin/chromedriver -jar selenium-server-standalone.jar 
+chromedriver --url-base=/wd/hub 
+
+#Sample Java Program
+####################################################################################
+vim TecAdminSeleniumTest.java >>
+
+import java.io.IOException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.Test;
+public class TecAdminSeleniumTest {
+ 
+        public static void main(String[] args) throws IOException, InterruptedException {
+                System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--headless");
+                chromeOptions.addArguments("--no-sandbox");
+ 
+                WebDriver driver = new ChromeDriver(chromeOptions);
+ 
+                driver.get("https://google.com");
+ 
+                Thread.sleep(1000);
+ 
+                if (driver.getPageSource().contains("I'm Feeling Lucky")) {
+                        System.out.println("Pass");
+                } else {
+                        System.out.println("Fail");
+                }
+                driver.quit();
+        }
+}
+
+##############################################################################################
+export CLASSPATH=".:selenium-server-standalone.jar:testng-6.8.7.jar" 
+javac TecAdminSeleniumTest.java 
+java TecAdminSeleniumTest
+
+## jenkins command run.
+ssh -i /var/lib/jenkins/privet rajat@34.125.142.11 "export CLASSPATH=".:selenium-server-standalone.jar:testng-6.8.7.jar" && javac TecAdminSeleniumTest.java && java TecAdminSeleniumTest"
+
+
+
+
