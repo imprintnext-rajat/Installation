@@ -1,0 +1,120 @@
+## install memcached in ubuntu 
+apt update
+apt install memcached
+apt install libmemcached-tools
+apt install php-memcache
+sudo systemctl start memcached
+
+## configure host in memcache
+nano /etc/memcached.conf
+-l 127.0.0.1 
+-l 10.182.0.16
+
+systemctl restart memcached
+
+-----------------------------------
+### vi nomalmemcache.php######
+<?php
+try
+{
+    $memcached = new Memcached();
+    $memcached->addServer("127.0.0.1", 11211); 
+    $response = $memcached->get("sample_key");
+ 
+    if($response==true) 
+    {
+      echo $response;
+    } 
+
+    else
+
+    {
+    echo "Cache is empty";
+    $memcached->set("sample_key", "Sample data from cache") ;
+    }
+}
+catch (exception $e)
+{
+echo $e->getMessage();
+}
+?>
+
+----------------------------------------------
+####vi mysqlwithMeMcache.php
+<?php
+$mem = new Memcached();
+$mem->addServer("127.0.0.1", 11211);
+$con =   mysqli_connect("34.29.71.52", "raja", "12345", "data");
+
+$query = "SELECT ID FROM sample_data WHERE name = 'some_data'";
+$querykey = "KEY" . md5($query);
+
+$result = $mem->get($querykey);
+print_r($result);
+
+if ($result) {
+
+print "<p>Data was: " . $result[0] . "</p>";
+
+print "<p>Caching success!</p><p>Retrieved data from memcached!</p>";
+
+}
+
+else {
+
+$result = mysqli_query($con,$query);
+$result = mysqli_fetch_array($result);
+
+$mem->set($querykey, $result, 20);
+
+print "<p>Data was: " . $result[0] . "</p>";
+
+print "<p>Data not found in memcached.</p><p>Data retrieved from MySQL and stored in memcached for next time.</p>";
+
+}
+
+?>
+
+----------------------------------------------------------------
+### for session add some line in php.ini
+session.save_handler = memcached
+session.save_path = "127.0.0.1:11211"
+
+systemctl restart memcached
+systemctl restart apache2
+
+####vi session.php
+<?php
+    header('Content-Type: text/plain');
+    session_start();
+    if(!isset($_SESSION['visit']))
+    {
+        echo "This is the first time you're visiting this server\n";
+        $_SESSION['visit'] = 0;
+    }
+    else
+            echo "Your number of visits: ".$_SESSION['visit'] . "\n";
+
+    $_SESSION['visit']++;
+
+        echo "Server IP: ".$_SERVER['SERVER_ADDR'] . "\n";
+        echo "Client IP: ".$_SERVER['REMOTE_ADDR'] . "\n";
+        print_r($_COOKIE);
+?>
+------------------------------------------------------------------------
+### connect memcache terminal -->
+telnet localhost 11211
+
+##### command to  show the data;----->
+echo 'stats' | nc LOCALHOST 11211
+
+memcdump --servers=localhost
+php -r '$c = new Memcached(); $c->addServer("localhost", 11211); var_dump( $c->getAllKeys() );'
+
+echo 'delete('key1')' | nc  LOCALHOST  11211
+
+
+
+
+
+
