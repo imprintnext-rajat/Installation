@@ -15,11 +15,11 @@ spec:
       containers:
       - name: jenkins
         image: jenkins/jenkins:2.391-jdk11
-        lifecycle:
-          postStart:
-            exec:
+        #lifecycle:
+          #postStart:
+            #exec:
               ##command: ["/bin/bash", "-c", "apt update && apt install -y nodejs nano php-cli unzip"]
-              ## 1st comment the command line , then apply the  jenkinsdeploy.yml.After creation of pv then add the jenkins.sh file in /var/jenkins_home/ (here)
+              ## [1st comment the command line , then] apply the  jenkinsdeploy.yml.After creation of pv then add the jenkins.sh file in /var/jenkins_home/ (here)
               ##then uncomment the  command line  the apply jenkinsdeploy.yml
               #command: ["/bin/sh", "-c", " bash ./var/jenkins_home/jenkins.sh"]
         ports:
