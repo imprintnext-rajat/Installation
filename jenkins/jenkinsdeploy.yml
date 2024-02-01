@@ -15,6 +15,11 @@ spec:
       containers:
       - name: jenkins
         image: jenkins/jenkins:2.391-jdk11
+        lifecycle:
+          postStart:
+            exec:
+              #command: ["/bin/bash", "-c", "apt update && apt install -y nodejs nano php-cli unzip"]
+              command: ["/bin/sh", "-c", " bash ./var/jenkins_home/test.sh"]
         ports:
           - name: http-port
             containerPort: 8080
@@ -31,4 +36,4 @@ spec:
       volumes:
         - name: jenkins-data
           persistentVolumeClaim:
-            claimName: jenkins-pv-claim 
+            claimName: jenkins-pv-claim
