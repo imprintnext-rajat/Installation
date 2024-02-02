@@ -4,6 +4,7 @@ apt update -y
 apt install -y php7.4
 # install nodejs
 apt install nodejs -y
+apt install -y npm
 apt install nano -y
 #check version
 #node -v
