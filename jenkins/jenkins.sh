@@ -2,10 +2,15 @@
 apt update -y
 ## jenkins image (jenkins/jenkins:2.391-jdk11)
 apt install -y php7.4
+apt install -y nano
 # install nodejs
-apt install nodejs -y
-apt install -y npm
-apt install nano -y
+curl -sL https://deb.nodesource.com/setup_12.x -o /tmp/nodesource_setup.sh
+bash /tmp/nodesource_setup.sh
+apt update -y
+apt -y install nodejs
+npm install -g gulp-cli
+npm install -g @angular/cli@6.1.1
+
 #check version
 #node -v
 
