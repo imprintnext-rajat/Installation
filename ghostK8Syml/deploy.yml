@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: ghostapp
+ labels:
+  app: ghostapp
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   app: ghostapp
+ template:
+  metadata: 
+   labels:
+    app: ghostapp
+  spec:
+   containers:
+   - name: ghostcontainer
+     image: ghost:alpine
+     env:
+     - name: database__client
+       value: mysql
+     - name: database__connection__host
+       value: 35.200.222.68
+     - name: database__connection__user
+       value: root
+     - name: database__connection__password
+       value: yuUzg:cl9V}-&ddq
+     - name: database__connection__database
+       value: ghostDB
+     ports:
+     - containerPort: 2368
+     volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: pvc-demo-vol
+   volumes:
+   - name: pvc-demo-vol
+     persistentVolumeClaim:
+       claimName: ghost-pv-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghostapp
+spec:
+  type: LoadBalancer
+  selector:
+    app: ghostapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
