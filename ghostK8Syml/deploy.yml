@@ -32,7 +32,7 @@ spec:
      ports:
      - containerPort: 2368
      volumeMounts:
-        - mountPath: "/usr/share/nginx/html"
+        - mountPath: "/var/lib/ghost/content"
           name: pvc-demo-vol
    volumes:
    - name: pvc-demo-vol
