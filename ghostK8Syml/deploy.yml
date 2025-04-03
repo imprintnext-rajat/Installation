@@ -45,7 +45,8 @@ kind: Service
 metadata:
   name: ghostapp
 spec:
-  type: LoadBalancer
+  type: ClusterIP
+  clusterIP:  10.43.74.43 
   selector:
     app: ghostapp
   ports:
