@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mariadb:
+    container_name: mariadb-container
+    image: mariadb:10.8
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --skip-innodb-read-only-compressed # Temporary fix for MariaDB 10.6
+    environment:
+      #MARIADB_USER: frappeUser
+      #MARIADB_PASSWORD: 321@Test
+      MARIADB_ROOT_PASSWORD: Frappe@Root
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - mariaDB-network
+
+volumes:
+  db:
+
+networks:
+  mariaDB-network:
+     driver: bridge

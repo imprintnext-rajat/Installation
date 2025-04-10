@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - redisdata:/data
+    # networks:
+    #   - mariadb_mariaDB-network
+  frappe:
+    container_name: frappeContainer
+    image: frappe/bench:latest
+    command: bash /workspace/init.sh
+    environment:
+      - SHELL=/bin/bash
+    working_dir: /home/frappe
+    volumes:
+      - frappe:/home/frappe
+      #- ./data/frappe-bench/:/home/frappe/frappe-bench/
+      - ./:/workspace
+    ports:
+      - 80:8000
+      - 9523:9000
+    # networks:
+    #   - mariadb_mariaDB-network
+
+volumes:
+  frappe:
+  redisdata:
+# networks:
+#     mariadb_mariaDB-network:
+#       external: true
